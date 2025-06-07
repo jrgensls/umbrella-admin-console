@@ -24,6 +24,14 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <tr className="bg-white border border-[rgba(201,201,201,1)] border-solid">
       <td className="w-[47px] px-3 py-[11px] border-[rgba(219,219,219,1)] border-b text-center">
@@ -37,7 +45,7 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
       <td className="w-[240px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
         <div className="flex flex-col">
           <div className="font-medium text-sm text-neutral-800">{company.name}</div>
-          <div className="text-xs text-gray-500">Since {new Date(company.memberSince).getFullYear()}</div>
+          <div className="text-xs text-gray-500">Start date: {formatDate(company.memberSince)}</div>
         </div>
       </td>
       <td className="w-[200px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
