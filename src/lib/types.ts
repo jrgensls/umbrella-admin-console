@@ -1,3 +1,4 @@
+
 export interface Member {
   id: string;
   customerName: string;
@@ -26,4 +27,12 @@ export interface TabItem {
   label: string;
   icon?: string;
   isActive: boolean;
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  address: string;
+  startDate: string;
+  contactEmail: string;
 }
