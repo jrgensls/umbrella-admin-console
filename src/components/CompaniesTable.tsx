@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Company, CompanyFilterState } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
@@ -171,9 +170,6 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
               <div className="self-stretch my-auto">Company</div>
             </th>
             <th className="bg-white min-w-40 flex-1 shrink basis-[0%] gap-[7px] px-3.5 py-[11px] border-[0.5px] border-solid border-[#B9B9B9] text-left">
-              Industry
-            </th>
-            <th className="bg-white min-w-40 flex-1 shrink basis-[0%] gap-[7px] px-3.5 py-[11px] border-[0.5px] border-solid border-[#B9B9B9] text-left">
               Contact
             </th>
             <th className="bg-white min-w-32 flex-1 shrink basis-[0%] gap-[7px] px-3.5 py-[11px] border-[0.5px] border-solid border-[#B9B9B9] text-left">
@@ -208,18 +204,10 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
                 </div>
               </td>
               <td className="flex min-w-60 items-center gap-3 text-sm text-neutral-800 font-normal px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
-                <img
-                  src={company.logo}
-                  alt={`${company.name} logo`}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
                 <div className="flex flex-col">
                   <div className="font-medium">{company.name}</div>
                   <div className="text-xs text-gray-500">Since {new Date(company.memberSince).getFullYear()}</div>
                 </div>
-              </td>
-              <td className="flex items-center text-sm text-neutral-800 font-normal px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
-                {company.industry}
               </td>
               <td className="flex items-center text-sm text-neutral-800 font-normal px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
                 <div className="flex flex-col">
