@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
-import { TabNavigation } from '@/components/TabNavigation';
 import { CompanyFilterBar } from '@/components/CompanyFilterBar';
 import { CompaniesTable } from '@/components/CompaniesTable';
 import { CompanyFilterState } from '@/lib/types';
@@ -20,10 +19,6 @@ const Companies: React.FC = () => {
 
   const handleFilterChange = (newFilters: CompanyFilterState) => {
     setFilters(newFilters);
-  };
-
-  const handleTabChange = (tabId: string) => {
-    console.log('Tab changed to:', tabId);
   };
 
   return (
@@ -65,9 +60,8 @@ const Companies: React.FC = () => {
               </div>
             </div>
 
-            {/* Tab Navigation and View Settings */}
-            <div className="flex w-full max-w-[1682px] gap-5 flex-wrap justify-between px-6 max-md:max-w-full">
-              <TabNavigation onTabChange={handleTabChange} />
+            {/* View Settings - moved up to replace tab navigation */}
+            <div className="flex w-full max-w-[1682px] justify-end px-6 mb-4 max-md:max-w-full">
               <div className="flex text-sm text-[#49443C] font-medium">
                 <button className="items-center flex min-h-[31px] gap-[7px] pr-[var(--button-padding-x,] pl-[}] pt-[7px)] pb-[10.5px;] rounded-md hover:bg-gray-100 transition-colors">
                   <img
