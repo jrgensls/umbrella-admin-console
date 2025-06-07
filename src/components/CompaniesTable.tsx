@@ -135,13 +135,13 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
 
   return (
     <div className="min-h-[490px] w-full max-md:max-w-full mt-4">
-      <table className="w-full">
+      <table className="w-full border-collapse">
         <CompanyTableHeader
           selectedCompanies={selectedCompanies}
           filteredCompaniesLength={filteredCompanies.length}
           onSelectAll={handleSelectAll}
         />
-        <tbody className="w-full max-md:max-w-full">
+        <tbody>
           {filteredCompanies.map((company) => (
             <CompanyTableRow
               key={company.id}
