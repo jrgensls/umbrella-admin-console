@@ -2,7 +2,6 @@
 import React from 'react';
 import { Company } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { CompanyBadges } from './CompanyBadges';
 import { CompanyActions } from './CompanyActions';
 
 interface CompanyTableRowProps {
@@ -16,6 +15,15 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
   isSelected,
   onSelect,
 }) => {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'inactive': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <tr className="bg-white border border-[rgba(201,201,201,1)] border-solid">
       <td className="w-[47px] px-3 py-[11px] border-[rgba(219,219,219,1)] border-b text-center">
@@ -54,9 +62,9 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
         </div>
       </td>
       <td className="w-[120px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
-        <CompanyBadges status={company.status} tier={company.membershipTier} />
-      </td>
-      <td className="w-[120px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
+        <Badge className={`text-xs font-medium ${getStatusColor(company.status)}`}>
+          {company.status.charAt(0).toUpperCase() + company.status.slice(1)}
+        </Badge>
       </td>
       <td className="w-[128px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
         <CompanyActions />

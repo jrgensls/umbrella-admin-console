@@ -36,9 +36,6 @@ export const CompanyTableHeader: React.FC<CompanyTableHeaderProps> = ({
           Workspaces
         </th>
         <th className="bg-white w-[120px] px-3.5 py-[11px] border-[0.5px] border-solid border-[#B9B9B9] text-left">
-          Tier
-        </th>
-        <th className="bg-white w-[120px] px-3.5 py-[11px] border-[0.5px] border-solid border-[#B9B9B9] text-left">
           Status
         </th>
         <th className="bg-white w-[128px] px-3.5 py-[11px] border-[0.5px] border-solid border-[#B9B9B9]">
