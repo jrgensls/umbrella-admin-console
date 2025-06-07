@@ -36,3 +36,29 @@ export interface Workspace {
   startDate: string;
   contactEmail: string;
 }
+
+export interface Company {
+  id: string;
+  name: string;
+  logo?: string;
+  industry: string;
+  primaryContact: string;
+  employeeCount: number;
+  memberSince: string;
+  workspaces: string[];
+  membershipTier: 'basic' | 'premium' | 'enterprise';
+  status: 'active' | 'inactive' | 'pending';
+  website?: string;
+  contactEmail: string;
+  isMultiLocation: boolean;
+}
+
+export interface CompanyFilterState {
+  searchQuery: string;
+  industry: string;
+  membershipTier: string;
+  workspace: string;
+  multiLocationOnly: boolean;
+  status: string;
+  sortOrder: 'ascending' | 'descending';
+}

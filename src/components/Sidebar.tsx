@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MenuItem } from '@/lib/types';
@@ -6,6 +5,7 @@ import { MenuItem } from '@/lib/types';
 const mainMenuItems: MenuItem[] = [
   { id: 'workspaces', label: 'Workspaces', icon: 'https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/261c188f11e5925ca9999830ee2299117c266789?placeholderIfAbsent=true', href: '/workspaces' },
   { id: 'members', label: 'Members', icon: 'https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/0f14a5259a9edb4da5325f52131bc7ca53a6c68c?placeholderIfAbsent=true', href: '/' },
+  { id: 'companies', label: 'Companies', icon: 'https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/0f14a5259a9edb4da5325f52131bc7ca53a6c68c?placeholderIfAbsent=true', href: '/companies' },
   { id: 'orders', label: 'Orders', icon: 'https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/edfbec5d568ce6fc26b2c0e50df6c8b0053e87d2?placeholderIfAbsent=true' },
 ];
 
