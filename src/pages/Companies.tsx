@@ -5,7 +5,6 @@ import { Sidebar } from '@/components/Sidebar';
 import { CompanyFilterBar } from '@/components/CompanyFilterBar';
 import { CompaniesTable } from '@/components/CompaniesTable';
 import { CompanyFilterState } from '@/lib/types';
-import { useRegistrations } from '@/hooks/useRegistrations';
 
 const Companies: React.FC = () => {
   const [filters, setFilters] = useState<CompanyFilterState>({
@@ -18,15 +17,9 @@ const Companies: React.FC = () => {
     sortOrder: 'descending',
   });
 
-  const { data: registrations, isLoading, error } = useRegistrations();
-
   const handleFilterChange = (newFilters: CompanyFilterState) => {
     setFilters(newFilters);
   };
-
-  console.log('Registrations data:', registrations);
-  console.log('Loading state:', isLoading);
-  console.log('Error state:', error);
 
   return (
     <div className="bg-[rgba(247,249,252,1)] flex flex-col overflow-hidden min-h-screen">
@@ -67,7 +60,7 @@ const Companies: React.FC = () => {
               </div>
             </div>
 
-            {/* View Settings - moved up to replace tab navigation */}
+            {/* View Settings */}
             <div className="flex w-full max-w-[1682px] justify-end px-6 mb-4 max-md:max-w-full">
               <div className="flex text-sm text-[#49443C] font-medium">
                 <button className="items-center flex min-h-[31px] gap-[7px] pr-[var(--button-padding-x,] pl-[}] pt-[7px)] pb-[10.5px;] rounded-md hover:bg-gray-100 transition-colors">
@@ -83,69 +76,7 @@ const Companies: React.FC = () => {
               </div>
             </div>
 
-            {/* Loading and Error States */}
-            {isLoading && (
-              <div className="px-6 py-4 text-center">
-                <p>Loading registrations...</p>
-              </div>
-            )}
-
-            {error && (
-              <div className="px-6 py-4 text-center text-red-600">
-                <p>Error loading registrations: {error.message}</p>
-              </div>
-            )}
-
-            {/* Registration Data Display */}
-            {registrations && registrations.length > 0 && (
-              <div className="px-6 mb-4">
-                <div className="bg-white rounded-lg p-4 shadow-sm">
-                  <h2 className="text-lg font-semibold mb-4">
-                    Registration Records ({registrations.length})
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left p-2 font-medium">Company Name</th>
-                          <th className="text-left p-2 font-medium">Contact Person</th>
-                          <th className="text-left p-2 font-medium">Email</th>
-                          <th className="text-left p-2 font-medium">Phone</th>
-                          <th className="text-left p-2 font-medium">Location</th>
-                          <th className="text-left p-2 font-medium">Status</th>
-                          <th className="text-left p-2 font-medium">Created</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {registrations.map((registration) => (
-                          <tr key={registration.id} className="border-b hover:bg-gray-50">
-                            <td className="p-2">{registration.company_name}</td>
-                            <td className="p-2">{registration.contact_person_name}</td>
-                            <td className="p-2">{registration.contact_email}</td>
-                            <td className="p-2">{registration.contact_phone}</td>
-                            <td className="p-2">{registration.preferred_location}</td>
-                            <td className="p-2">
-                              <span className={`px-2 py-1 rounded-full text-xs ${
-                                registration.payment_status === 'paid' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {registration.payment_status}
-                              </span>
-                            </td>
-                            <td className="p-2">
-                              {new Date(registration.created_at).toLocaleDateString()}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Original Content Area */}
+            {/* Companies Table */}
             <div className="px-6">
               <CompanyFilterBar onFilterChange={handleFilterChange} />
               <CompaniesTable filters={filters} />

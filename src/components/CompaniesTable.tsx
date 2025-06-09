@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Company, CompanyFilterState } from '@/lib/types';
 import { CompanyTableHeader } from './CompanyTableHeader';
 import { CompanyTableRow } from './CompanyTableRow';
+import { useRegistrations } from '@/hooks/useRegistrations';
 
 const mockCompanies: Company[] = [
   {
@@ -103,8 +104,29 @@ interface CompaniesTableProps {
 
 export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
+  const { data: registrations, isLoading, error } = useRegistrations();
 
-  const filteredCompanies = mockCompanies.filter(company => {
+  // Convert registrations to Company format and combine with mock data
+  const registrationCompanies: Company[] = registrations ? registrations.map((reg) => ({
+    id: reg.id,
+    name: reg.company_name,
+    logo: `https://via.placeholder.com/40x40/6366F1/FFFFFF?text=${reg.company_name.substring(0, 2).toUpperCase()}`,
+    industry: 'Registration', // Default industry for registrations
+    primaryContact: reg.contact_person_name,
+    employeeCount: 0, // Default employee count
+    memberSince: reg.created_at,
+    workspaces: [reg.preferred_location],
+    membershipTier: 'basic' as const,
+    status: reg.payment_status === 'paid' ? 'active' as const : 'pending' as const,
+    website: '',
+    contactEmail: reg.contact_email,
+    isMultiLocation: false,
+  })) : [];
+
+  // Combine mock companies with registration companies
+  const allCompanies = [...mockCompanies, ...registrationCompanies];
+
+  const filteredCompanies = allCompanies.filter(company => {
     const matchesSearch = company.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
                          company.primaryContact.toLowerCase().includes(filters.searchQuery.toLowerCase());
     
@@ -132,6 +154,22 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
         : filteredCompanies.map(company => company.id)
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[490px] w-full max-md:max-w-full mt-4 flex items-center justify-center">
+        <p>Loading companies...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-[490px] w-full max-md:max-w-full mt-4 flex items-center justify-center">
+        <p className="text-red-600">Error loading companies: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[490px] w-full max-md:max-w-full mt-4">
