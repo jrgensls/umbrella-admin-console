@@ -70,7 +70,7 @@ export const WorkspacesTable: React.FC<WorkspacesTableProps> = ({ searchQuery = 
   };
 
   return (
-    <div className="min-h-[490px] w-full max-md:max-w-full max-md:mt-[-200px] max-md:mr-2.5">
+    <div className="w-full mt-4 max-md:max-w-full">
       <table className="w-full">
         <thead className="flex w-full text-sm text-[rgba(37,37,37,1)] font-semibold flex-wrap border-black border-t max-md:max-w-full">
           <tr className="flex w-full">

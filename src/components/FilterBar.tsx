@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { FilterState } from '@/lib/types';
 
@@ -32,7 +33,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <section className="bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.25)] border flex flex-col items-stretch mt-2.5 pt-1.5 pb-[376px] px-[13px] rounded-[1px] border-[rgba(202,202,202,1)] border-solid max-md:max-w-full max-md:mr-2.5 max-md:pr-5 max-md:pb-[100px]">
+    <section className="bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.25)] border flex flex-col items-stretch mt-2.5 pt-1.5 pb-4 px-[13px] rounded-[1px] border-[rgba(202,202,202,1)] border-solid max-md:max-w-full max-md:mr-2.5 max-md:pr-5">
       <div className="w-full max-md:max-w-full">
         <div className="flex w-full gap-5 flex-wrap justify-between max-md:max-w-full">
           <div className="flex items-stretch gap-[15px]">
