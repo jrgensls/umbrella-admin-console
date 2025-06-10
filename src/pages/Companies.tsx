@@ -35,26 +35,20 @@ const Companies: React.FC = () => {
               <h1 className="text-black text-[40px] font-semibold max-md:max-w-full">
                 Companies Overview
               </h1>
-              <div className="flex items-stretch gap-[40px_88px] mt-[11px]">
-                <button className="text-sm text-[#214BCD] font-semibold">
-                  <div className="flex w-full max-w-[70px] flex-col">
-                    <div className="items-center border border-[color:var(--zapfloor-blue-dark,#214BCD)] flex gap-[7px] pr-[var(--button-padding-x,] pl-[}] pt-[7px)] pb-[10.5px;] rounded-md border-solid hover:bg-blue-50 transition-colors">
-                      <img
-                        src="https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/7a5769a2f77c7ee18217e2094fc457c52aa5235a?placeholderIfAbsent=true"
-                        alt="Export"
-                        className="aspect-[1] object-contain w-3.5 self-stretch shrink-0 my-auto"
-                      />
-                      <div className="text-[#214BCD] self-stretch my-auto">
-                        Export to CSV
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex items-center gap-4 mt-3">
+                <button className="flex items-center gap-2 px-4 py-2 border border-[#214BCD] text-[#214BCD] text-sm font-semibold rounded-md hover:bg-blue-50 transition-colors">
+                  <img
+                    src="https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/7a5769a2f77c7ee18217e2094fc457c52aa5235a?placeholderIfAbsent=true"
+                    alt="Export"
+                    className="w-3.5 h-3.5"
+                  />
+                  Export to CSV
                 </button>
-                <button className="items-center flex gap-[7px] pr-[var(--button-padding-x,] mt-1 pl-[}] pt-[7px)] pb-[10.5px;] rounded-md hover:bg-gray-100 transition-colors">
+                <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
                   <img
                     src="https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/341b2ca4abe7d46069bed1ee05ef419f71adeac7?placeholderIfAbsent=true"
                     alt="More options"
-                    className="aspect-[1] object-contain w-3.5 self-stretch my-auto"
+                    className="w-3.5 h-3.5"
                   />
                 </button>
               </div>
@@ -63,15 +57,13 @@ const Companies: React.FC = () => {
             {/* View Settings */}
             <div className="flex w-full max-w-[1682px] justify-end px-6 mb-4 max-md:max-w-full">
               <div className="flex text-sm text-[#49443C] font-medium">
-                <button className="items-center flex min-h-[31px] gap-[7px] pr-[var(--button-padding-x,] pl-[}] pt-[7px)] pb-[10.5px;] rounded-md hover:bg-gray-100 transition-colors">
+                <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
                   <img
                     src="https://cdn.builder.io/api/v1/image/assets/47ad3a508fb640478c91bdeee233bd4b/16f71456d025e08e5ede9d54714c186e95f663fb?placeholderIfAbsent=true"
                     alt="View settings"
-                    className="aspect-[1] object-contain w-3.5 self-stretch shrink-0 my-auto"
+                    className="w-3.5 h-3.5"
                   />
-                  <div className="text-[#49443C] self-stretch my-auto">
-                    View settings
-                  </div>
+                  View settings
                 </button>
               </div>
             </div>
