@@ -106,22 +106,29 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const { data: registrations, isLoading, error } = useRegistrations();
 
+  console.log('Raw registrations data:', registrations);
+
   // Convert registrations to Company format and combine with mock data
-  const registrationCompanies: Company[] = registrations ? registrations.map((reg) => ({
-    id: reg.id,
-    name: reg.company_name,
-    logo: `https://via.placeholder.com/40x40/6366F1/FFFFFF?text=${reg.company_name.substring(0, 2).toUpperCase()}`,
-    industry: 'Registration', // Default industry for registrations
-    primaryContact: reg.contact_person_name,
-    employeeCount: 0, // Default employee count
-    memberSince: reg.created_at,
-    workspaces: [reg.preferred_location],
-    membershipTier: 'basic' as const,
-    status: reg.payment_status === 'paid' ? 'active' as const : 'pending' as const,
-    website: '',
-    contactEmail: reg.contact_email,
-    isMultiLocation: false,
-  })) : [];
+  const registrationCompanies: Company[] = registrations ? registrations.map((reg) => {
+    console.log('Processing registration:', reg);
+    return {
+      id: reg.id,
+      name: reg.company_name || 'Unknown Company',
+      logo: `https://via.placeholder.com/40x40/6366F1/FFFFFF?text=${(reg.company_name || 'UC').substring(0, 2).toUpperCase()}`,
+      industry: 'Registration', // Default industry for registrations
+      primaryContact: reg.contact_person_name || '',
+      employeeCount: 0, // Default employee count
+      memberSince: reg.created_at,
+      workspaces: [reg.preferred_location || 'Unknown Location'],
+      membershipTier: 'basic' as const,
+      status: reg.payment_status === 'paid' ? 'active' as const : 'pending' as const,
+      website: '',
+      contactEmail: reg.contact_email || '',
+      isMultiLocation: false,
+    };
+  }) : [];
+
+  console.log('Converted registration companies:', registrationCompanies);
 
   // Combine mock companies with registration companies
   const allCompanies = [...mockCompanies, ...registrationCompanies];
