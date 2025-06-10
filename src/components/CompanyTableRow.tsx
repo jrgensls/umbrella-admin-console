@@ -50,7 +50,7 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
       </td>
       <td className="w-[200px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
         <div className="flex flex-col">
-          {company.primaryContact && (
+          {company.primaryContact && company.primaryContact.trim() !== '' && (
             <div className="font-medium text-sm text-neutral-800">{company.primaryContact}</div>
           )}
           <div className="text-xs text-gray-500">{company.contactEmail}</div>
