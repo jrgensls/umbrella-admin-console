@@ -1,44 +1,7 @@
 
 import React, { useState } from 'react';
 import { Workspace } from '@/lib/types';
-
-const mockWorkspaces: Workspace[] = [
-  {
-    id: '1',
-    name: 'Kristinelund',
-    address: 'Kristinelund 12, Copenhagen, Denmark',
-    startDate: '15-03-2024',
-    contactEmail: 'contact@kristinelund.dk',
-  },
-  {
-    id: '2',
-    name: 'Mollerup Gods',
-    address: 'Mollerup Gods 45, Aarhus, Denmark',
-    startDate: '20-02-2024',
-    contactEmail: 'info@mollerupgods.dk',
-  },
-  {
-    id: '3',
-    name: 'Brain Embassy',
-    address: 'Brain Embassy Street 8, Odense, Denmark',
-    startDate: '10-01-2024',
-    contactEmail: 'hello@brainembassy.dk',
-  },
-  {
-    id: '4',
-    name: 'Groska',
-    address: 'Groska Avenue 23, Aalborg, Denmark',
-    startDate: '05-04-2024',
-    contactEmail: 'contact@groska.dk',
-  },
-  {
-    id: '5',
-    name: 'Wintercircus',
-    address: 'Wintercircus Plaza 16, Esbjerg, Denmark',
-    startDate: '12-05-2024',
-    contactEmail: 'info@wintercircus.dk',
-  },
-];
+import { useWorkspaces } from '@/hooks/useWorkspaces';
 
 interface WorkspacesTableProps {
   searchQuery?: string;
@@ -46,8 +9,25 @@ interface WorkspacesTableProps {
 
 export const WorkspacesTable: React.FC<WorkspacesTableProps> = ({ searchQuery = '' }) => {
   const [selectedWorkspaces, setSelectedWorkspaces] = useState<string[]>([]);
+  const { data: workspaces, isLoading, error } = useWorkspaces();
 
-  const filteredWorkspaces = mockWorkspaces.filter(workspace =>
+  console.log('Raw workspaces data:', workspaces);
+
+  // Convert workspaces data to the expected format
+  const convertedWorkspaces: Workspace[] = workspaces ? workspaces.map((workspace) => {
+    console.log('Processing workspace:', workspace);
+    return {
+      id: workspace.id,
+      name: workspace.name || 'Unknown Workspace',
+      address: workspace.address || 'Unknown Address',
+      startDate: workspace.start_date ? new Date(workspace.start_date).toLocaleDateString('da-DK') : 'Unknown Date',
+      contactEmail: workspace.contact_email || '',
+    };
+  }) : [];
+
+  console.log('Converted workspaces:', convertedWorkspaces);
+
+  const filteredWorkspaces = convertedWorkspaces.filter(workspace =>
     workspace.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     workspace.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
     workspace.contactEmail.toLowerCase().includes(searchQuery.toLowerCase())
@@ -68,6 +48,22 @@ export const WorkspacesTable: React.FC<WorkspacesTableProps> = ({ searchQuery = 
         : filteredWorkspaces.map(workspace => workspace.id)
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full mt-4 max-md:max-w-full flex items-center justify-center min-h-[200px]">
+        <p>Loading workspaces...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full mt-4 max-md:max-w-full flex items-center justify-center min-h-[200px]">
+        <p className="text-red-600">Error loading workspaces: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mt-4 max-md:max-w-full">

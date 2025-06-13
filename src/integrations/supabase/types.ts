@@ -93,6 +93,36 @@ export type Database = {
         }
         Relationships: []
       }
+      workspaces: {
+        Row: {
+          address: string
+          contact_email: string
+          created_at: string
+          id: string
+          name: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          contact_email: string
+          created_at?: string
+          id?: string
+          name: string
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          contact_email?: string
+          created_at?: string
+          id?: string
+          name?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
