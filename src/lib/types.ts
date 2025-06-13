@@ -43,7 +43,7 @@ export interface Company {
   logo?: string;
   industry: string;
   primaryContact: string;
-  employeeCount: number;
+  employeeCount: string | number; // Updated to allow string or number for company_size
   memberSince: string;
   workspaces: string[];
   membershipTier: 'basic' | 'premium' | 'enterprise';

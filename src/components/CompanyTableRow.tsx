@@ -32,6 +32,13 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
     return `${day}/${month}/${year}`;
   };
 
+  const displayEmployeeCount = (employeeCount: string | number) => {
+    if (typeof employeeCount === 'string') {
+      return employeeCount === 'Not specified' ? 'Not specified' : employeeCount;
+    }
+    return `${employeeCount} employees`;
+  };
+
   return (
     <tr className="bg-white border border-[rgba(201,201,201,1)] border-solid">
       <td className="w-[47px] px-3 py-[11px] border-[rgba(219,219,219,1)] border-b text-center">
@@ -57,7 +64,7 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
         </div>
       </td>
       <td className="w-[120px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b text-sm text-neutral-800">
-        {company.employeeCount} employees
+        {displayEmployeeCount(company.employeeCount)}
       </td>
       <td className="w-[200px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
         <div className="flex flex-col gap-1">

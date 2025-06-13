@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Company, CompanyFilterState } from '@/lib/types';
 import { CompanyTableHeader } from './CompanyTableHeader';
@@ -24,7 +23,7 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
       logo: `https://via.placeholder.com/40x40/6366F1/FFFFFF?text=${(reg.company_name || 'UC').substring(0, 2).toUpperCase()}`,
       industry: 'Business', // Default industry for registrations
       primaryContact: reg.contact_person_name || '',
-      employeeCount: 0, // Default employee count since not in registrations table
+      employeeCount: reg.company_size || 'Not specified', // Use company_size from registrations
       memberSince: reg.created_at,
       workspaces: [reg.preferred_location || 'Unknown Location'],
       membershipTier: 'basic' as const,
