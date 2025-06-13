@@ -10,7 +10,7 @@ interface CompaniesTableProps {
 
 export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
-  const { data: registrations, isLoading, error } = useRegistrations();
+  const { data: registrations, isLoading, error, refetch } = useRegistrations();
 
   console.log('Raw registrations data:', registrations);
 
@@ -27,7 +27,8 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
       memberSince: reg.created_at,
       workspaces: [reg.preferred_location || 'Unknown Location'],
       membershipTier: 'basic' as const,
-      status: reg.payment_status === 'paid' ? 'active' as const : 'pending' as const,
+      status: reg.payment_status === 'paid' ? 'active' as const : 
+              reg.payment_status === 'inactive' ? 'inactive' as const : 'pending' as const,
       website: '',
       contactEmail: reg.contact_email || '',
       isMultiLocation: false,
@@ -66,6 +67,11 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
     );
   };
 
+  const handleStatusUpdate = () => {
+    // Refetch the data to update the UI
+    refetch();
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-[490px] w-full max-md:max-w-full mt-4 flex items-center justify-center">
@@ -97,6 +103,7 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ filters }) => {
               company={company}
               isSelected={selectedCompanies.includes(company.id)}
               onSelect={handleSelectCompany}
+              onStatusUpdate={handleStatusUpdate}
             />
           ))}
         </tbody>

@@ -1,6 +1,9 @@
 
 import React, { useState } from 'react';
 import { MoreHorizontal, AlertTriangle } from 'lucide-react';
+import { Company } from '@/lib/types';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,13 +21,54 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-export const CompanyActions: React.FC = () => {
-  const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+interface CompanyActionsProps {
+  company: Company;
+  onStatusUpdate?: () => void;
+}
 
-  const handleDeactivateCompany = () => {
-    // Handle deactivation logic here
-    console.log('Company deactivated');
-    setShowDeactivateDialog(false);
+export const CompanyActions: React.FC<CompanyActionsProps> = ({ company, onStatusUpdate }) => {
+  const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+  const [isDeactivating, setIsDeactivating] = useState(false);
+
+  const handleDeactivateCompany = async () => {
+    setIsDeactivating(true);
+    
+    try {
+      // Update the payment_status to 'inactive' in the registrations table
+      const { error } = await supabase
+        .from('registrations')
+        .update({ payment_status: 'inactive' })
+        .eq('id', company.id);
+
+      if (error) {
+        console.error('Error deactivating company:', error);
+        toast({
+          title: "Error",
+          description: "Failed to deactivate company. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `${company.name} has been deactivated successfully.`,
+        });
+        
+        // Call the callback to refresh the data
+        if (onStatusUpdate) {
+          onStatusUpdate();
+        }
+      }
+    } catch (error) {
+      console.error('Error deactivating company:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeactivating(false);
+      setShowDeactivateDialog(false);
+    }
   };
 
   return (
@@ -40,8 +84,9 @@ export const CompanyActions: React.FC = () => {
             <DropdownMenuItem 
               onClick={() => setShowDeactivateDialog(true)}
               className="text-red-600 focus:text-red-600"
+              disabled={company.status === 'inactive'}
             >
-              Deactivate company
+              {company.status === 'inactive' ? 'Already Deactivated' : 'Deactivate company'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -55,16 +100,17 @@ export const CompanyActions: React.FC = () => {
               Deactivate Company
             </AlertDialogTitle>
             <AlertDialogDescription>
-              By deactivating this company, the employees won't be able to make reservations anymore in the co-create network. This action can be reversed later.
+              By deactivating {company.name}, the employees won't be able to make reservations anymore in the co-create network. This action can be reversed later.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeactivating}>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeactivateCompany}
               className="bg-red-600 hover:bg-red-700"
+              disabled={isDeactivating}
             >
-              Deactivate Company
+              {isDeactivating ? 'Deactivating...' : 'Deactivate Company'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

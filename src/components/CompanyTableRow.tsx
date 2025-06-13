@@ -8,12 +8,14 @@ interface CompanyTableRowProps {
   company: Company;
   isSelected: boolean;
   onSelect: (companyId: string) => void;
+  onStatusUpdate?: () => void;
 }
 
 export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
   company,
   isSelected,
   onSelect,
+  onStatusUpdate,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -84,7 +86,7 @@ export const CompanyTableRow: React.FC<CompanyTableRowProps> = ({
         </Badge>
       </td>
       <td className="w-[128px] px-3.5 py-[11px] border-[rgba(219,219,219,1)] border-b">
-        <CompanyActions />
+        <CompanyActions company={company} onStatusUpdate={onStatusUpdate} />
       </td>
     </tr>
   );
