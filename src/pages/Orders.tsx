@@ -23,16 +23,19 @@ const Orders = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex w-full">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-bold text-foreground">Umbrella Orders</h1>
-              <div className="flex items-center gap-3">
-                <button className="flex items-center gap-2 border px-4 py-2 rounded-md text-sm font-semibold border-[#214BCD] text-[#214BCD] hover:bg-blue-50 transition-colors">
+    <div className="bg-[rgba(247,249,252,1)] flex flex-col overflow-hidden min-h-screen">
+      <Header />
+      <div className="flex flex-1">
+        <Sidebar />
+        <main className="flex-1 flex flex-col">
+          <div className="z-10 flex w-full max-w-[1706px] flex-col items-stretch max-md:max-w-full">
+            {/* Page Header */}
+            <div className="flex w-full max-w-[1681px] items-stretch gap-5 flex-wrap justify-between p-6 max-md:max-w-full">
+              <h1 className="text-black text-[40px] font-semibold max-md:max-w-full">
+                Umbrella Orders
+              </h1>
+              <div className="flex items-center gap-4 mt-3">
+                <button className="flex items-center gap-2 px-4 py-2 border border-[#214BCD] text-[#214BCD] text-sm font-semibold rounded-md hover:bg-blue-50 transition-colors">
                   Export to CSV
                 </button>
                 <button className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors">
@@ -40,8 +43,10 @@ const Orders = () => {
                 </button>
               </div>
             </div>
-            <OrderFilterBar filters={filters} onFilterChange={handleFilterChange} />
-            <OrdersTable filters={filters} />
+            <div className="px-6">
+              <OrderFilterBar filters={filters} onFilterChange={handleFilterChange} />
+              <OrdersTable filters={filters} />
+            </div>
           </div>
         </main>
       </div>
@@ -50,3 +55,4 @@ const Orders = () => {
 };
 
 export default Orders;
+
