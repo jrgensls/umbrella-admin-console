@@ -3,19 +3,19 @@ import React, { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
 import { TabNavigation } from '@/components/TabNavigation';
-import { FilterBar } from '@/components/FilterBar';
 import { WorkspacesTable } from '@/components/WorkspacesTable';
-import { FilterState } from '@/lib/types';
+import { WorkspaceFilterBar, WorkspaceFilterState } from '@/components/WorkspaceFilterBar';
+
+const initialFilters: WorkspaceFilterState = {
+  searchQuery: '',
+  location: 'All Locations',
+  sortOrder: 'descending',
+};
 
 const Workspaces: React.FC = () => {
-  const [filters, setFilters] = useState<FilterState>({
-    searchQuery: '',
-    dateFilter: 'Date',
-    sortOrder: 'descending',
-    activeFilters: ['Expected date after'],
-  });
+  const [filters, setFilters] = useState<WorkspaceFilterState>(initialFilters);
 
-  const handleFilterChange = (newFilters: FilterState) => {
+  const handleFilterChange = (newFilters: WorkspaceFilterState) => {
     setFilters(newFilters);
   };
 
@@ -26,10 +26,8 @@ const Workspaces: React.FC = () => {
   return (
     <div className="bg-[rgba(247,249,252,1)] flex flex-col overflow-hidden min-h-screen">
       <Header />
-      
       <div className="flex flex-1">
         <Sidebar />
-        
         <main className="flex-1 flex flex-col">
           <div className="z-10 flex w-full max-w-[1706px] flex-col items-stretch max-md:max-w-full">
             {/* Page Header */}
@@ -61,7 +59,6 @@ const Workspaces: React.FC = () => {
                 </button>
               </div>
             </div>
-
             {/* Tab Navigation and View Settings */}
             <div className="flex w-full max-w-[1682px] gap-5 flex-wrap justify-between px-6 max-md:max-w-full">
               <TabNavigation onTabChange={handleTabChange} />
@@ -78,11 +75,10 @@ const Workspaces: React.FC = () => {
                 </button>
               </div>
             </div>
-
             {/* Content Area */}
             <div className="px-6">
-              <FilterBar onFilterChange={handleFilterChange} />
-              <WorkspacesTable searchQuery={filters.searchQuery} />
+              <WorkspaceFilterBar filters={filters} onFilterChange={handleFilterChange} />
+              <WorkspacesTable filters={filters} />
             </div>
           </div>
         </main>

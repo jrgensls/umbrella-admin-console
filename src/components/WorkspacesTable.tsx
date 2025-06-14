@@ -1,37 +1,47 @@
-
 import React, { useState } from 'react';
 import { Workspace } from '@/lib/types';
 import { useWorkspaces } from '@/hooks/useWorkspaces';
+import type { WorkspaceFilterState } from '@/components/WorkspaceFilterBar';
 
 interface WorkspacesTableProps {
-  searchQuery?: string;
+  filters: WorkspaceFilterState;
 }
 
-export const WorkspacesTable: React.FC<WorkspacesTableProps> = ({ searchQuery = '' }) => {
+export const WorkspacesTable: React.FC<WorkspacesTableProps> = ({ filters }) => {
   const [selectedWorkspaces, setSelectedWorkspaces] = useState<string[]>([]);
   const { data: workspaces, isLoading, error } = useWorkspaces();
 
-  console.log('Raw workspaces data:', workspaces);
-
   // Convert workspaces data to the expected format
   const convertedWorkspaces: Workspace[] = workspaces ? workspaces.map((workspace) => {
-    console.log('Processing workspace:', workspace);
     return {
       id: workspace.id,
       name: workspace.name || 'Unknown Workspace',
       address: workspace.address || 'Unknown Address',
       startDate: workspace.start_date ? new Date(workspace.start_date).toLocaleDateString('da-DK') : 'Unknown Date',
       contactEmail: workspace.contact_email || '',
+      location: workspace.name || '',
     };
   }) : [];
 
-  console.log('Converted workspaces:', convertedWorkspaces);
+  // Filter
+  let filteredWorkspaces = convertedWorkspaces
+    .filter(workspace =>
+      workspace.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+      workspace.address.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+      workspace.contactEmail.toLowerCase().includes(filters.searchQuery.toLowerCase())
+    );
 
-  const filteredWorkspaces = convertedWorkspaces.filter(workspace =>
-    workspace.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    workspace.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    workspace.contactEmail.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  if (filters.location !== 'All Locations') {
+    filteredWorkspaces = filteredWorkspaces.filter(ws => ws.location === filters.location);
+  }
+
+  // Sorting
+  filteredWorkspaces = filteredWorkspaces.slice().sort((a, b) => {
+    if (filters.sortOrder === 'ascending') {
+      return a.name.localeCompare(b.name);
+    }
+    return b.name.localeCompare(a.name);
+  });
 
   const handleSelectWorkspace = (workspaceId: string) => {
     setSelectedWorkspaces(prev =>
