@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -8,10 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Search, Settings, Home, Plus } from 'lucide-react';
-import { OrderFilterBar } from '@/components/OrderFilterBar';
+import { type OrderFilterState } from '@/pages/Orders';
 
 // Mock data based on the screenshot
 const ordersData = [
@@ -53,106 +50,59 @@ const ordersData = [
   }
 ];
 
-export const OrdersTable = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+interface OrdersTableProps {
+  filters: OrderFilterState;
+}
 
-  const filteredOrders = ordersData.filter(order =>
+export const OrdersTable: React.FC<OrdersTableProps> = ({ filters }) => {
+  const { searchQuery, dateFilter, sortOrder } = filters;
+
+  let filteredOrders = ordersData.filter(order =>
     order.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     order.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     order.city.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Sorting
+  if (sortOrder === 'ascending') {
+    filteredOrders = filteredOrders.slice().sort((a, b) => a.name.localeCompare(b.name));
+  } else {
+    filteredOrders = filteredOrders.slice().sort((a, b) => b.name.localeCompare(a.name));
+  }
+
+  // For "dateFilter", in a real app, you'd filter dates, but here we just show the control.
+
+  // Render table
   return (
-    <Card className="bg-white shadow-sm">
-      <div className="p-6">
-        {/* Tab Navigation */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" className="flex items-center gap-2 text-blue-600 border-b-2 border-blue-600 rounded-none pb-2">
-              <Home className="h-4 w-4" />
-              All
-            </Button>
-            <Button variant="ghost" className="flex items-center gap-1">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-          <Button variant="ghost" className="flex items-center gap-2 text-blue-600">
-            <Settings className="h-4 w-4" />
-            View settings
-          </Button>
-        </div>
-
-        {/* Filter Bar */}
-        <OrderFilterBar onFilterChange={() => {}} />
-
-        {/* Search Bar */}
-        <div className="flex items-center justify-between mb-4 mt-4">
-          <div className="flex items-center gap-4">
-            <select className="px-3 py-2 border border-gray-300 rounded-md text-sm">
-              <option>Name</option>
-              <option>Email</option>
-              <option>City</option>
-            </select>
-            <select className="px-3 py-2 border border-gray-300 rounded-md text-sm">
-              <option>Descending</option>
-              <option>Ascending</option>
-            </select>
-          </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <input
-              type="text"
-              placeholder="Search ...( press enter to submit )"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm w-80"
-            />
-          </div>
-        </div>
-
-        {/* Active Filters */}
-        <div className="flex items-center gap-4 mb-6">
-          <span className="text-sm text-gray-600">Active filters</span>
-          <div className="flex items-center gap-2">
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">
-              Date activated
-            </span>
-            <div className="w-4 h-4 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-              1
-            </div>
-          </div>
-        </div>
-
-        {/* Table */}
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-gray-700 font-medium">Name</TableHead>
-              <TableHead className="text-gray-700 font-medium">VAT Number</TableHead>
-              <TableHead className="text-gray-700 font-medium">Phone</TableHead>
-              <TableHead className="text-gray-700 font-medium">Email</TableHead>
-              <TableHead className="text-gray-700 font-medium">Address</TableHead>
-              <TableHead className="text-gray-700 font-medium">City</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredOrders.map((order) => (
-              <TableRow key={order.id} className="hover:bg-gray-50">
-                <TableCell className="font-medium">{order.name}</TableCell>
-                <TableCell className="text-gray-600">{order.vatNumber}</TableCell>
-                <TableCell className="text-gray-600">{order.phone}</TableCell>
-                <TableCell>
-                  <a href={`mailto:${order.email}`} className="text-blue-600 hover:underline">
-                    {order.email}
-                  </a>
-                </TableCell>
-                <TableCell className="text-gray-600">{order.address}</TableCell>
-                <TableCell className="text-gray-600">{order.city}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </Card>
+    <div className="min-h-[490px] w-full mt-4 bg-white border rounded-lg shadow-sm">
+      <table className="w-full border-collapse">
+        <thead>
+          <tr>
+            <th className="px-6 py-4 text-left font-semibold text-gray-700">Name</th>
+            <th className="px-6 py-4 text-left font-semibold text-gray-700">VAT Number</th>
+            <th className="px-6 py-4 text-left font-semibold text-gray-700">Phone</th>
+            <th className="px-6 py-4 text-left font-semibold text-gray-700">Email</th>
+            <th className="px-6 py-4 text-left font-semibold text-gray-700">Address</th>
+            <th className="px-6 py-4 text-left font-semibold text-gray-700">City</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredOrders.map((order) => (
+            <tr key={order.id} className="hover:bg-gray-50">
+              <td className="px-6 py-3 font-medium">{order.name}</td>
+              <td className="px-6 py-3 text-gray-600">{order.vatNumber}</td>
+              <td className="px-6 py-3 text-gray-600">{order.phone}</td>
+              <td className="px-6 py-3">
+                <a href={`mailto:${order.email}`} className="text-blue-600 hover:underline">
+                  {order.email}
+                </a>
+              </td>
+              <td className="px-6 py-3 text-gray-600">{order.address}</td>
+              <td className="px-6 py-3 text-gray-600">{order.city}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };

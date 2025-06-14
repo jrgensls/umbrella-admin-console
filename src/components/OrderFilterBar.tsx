@@ -1,78 +1,81 @@
 
-import React, { useState } from 'react';
-import { ChevronDown, Filter } from 'lucide-react';
+import React from 'react';
+import { Search, Filter, Settings } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import type { OrderFilterState } from '@/pages/Orders';
 
 interface OrderFilterBarProps {
-  onFilterChange?: (filters: any) => void;
+  filters: OrderFilterState;
+  onFilterChange?: (filters: OrderFilterState) => void;
 }
 
-export const OrderFilterBar: React.FC<OrderFilterBarProps> = ({ onFilterChange }) => {
-  const [filters, setFilters] = useState({
-    dateFilter: 'Date',
-    sortOrder: 'descending',
-    searchQuery: '',
-  });
-
-  const handleFilterChange = (key: string, value: string) => {
+export const OrderFilterBar: React.FC<OrderFilterBarProps> = ({ filters, onFilterChange }) => {
+  const handleFilterChange = (key: keyof OrderFilterState, value: any) => {
     const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
     onFilterChange?.(newFilters);
   };
 
+  const activeFilters = [
+    filters.dateFilter !== 'Date' && filters.dateFilter,
+    filters.sortOrder !== 'descending' && `Sorted: ${filters.sortOrder.charAt(0).toUpperCase() + filters.sortOrder.slice(1)}`
+  ].filter(Boolean);
+
+  const activeFiltersCount = activeFilters.length + (filters.searchQuery ? 1 : 0);
+
   return (
-    <div className="bg-white border rounded-md p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          {/* Date Filter */}
-          <div className="relative">
-            <select
-              value={filters.dateFilter}
-              onChange={(e) => handleFilterChange('dateFilter', e.target.value)}
-              className="appearance-none bg-white border border-gray-300 rounded-md px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="Date">Date</option>
-              <option value="Last 7 days">Last 7 days</option>
-              <option value="Last 30 days">Last 30 days</option>
-              <option value="Last 90 days">Last 90 days</option>
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-          </div>
-
-          {/* Sort Order */}
-          <div className="relative">
-            <select
-              value={filters.sortOrder}
-              onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
-              className="appearance-none bg-white border border-gray-300 rounded-md px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="descending">Descending</option>
-              <option value="ascending">Ascending</option>
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-          </div>
+    <section className="bg-white border border-border rounded-lg shadow-sm p-6 mt-4 mb-2">
+      <div className="flex items-center justify-between gap-6">
+        {/* Search Input */}
+        <div className="flex-1 max-w-lg relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            value={filters.searchQuery}
+            onChange={e => handleFilterChange('searchQuery', e.target.value)}
+            placeholder="Search by company, email, or city..."
+            className="pl-10 h-11 bg-background border-input focus:ring-2 focus:ring-ring focus:border-transparent text-sm"
+          />
         </div>
-
+        {/* Filter Controls */}
         <div className="flex items-center gap-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Type to search (press enter to submit)"
-              value={filters.searchQuery}
-              onChange={(e) => handleFilterChange('searchQuery', e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-              2
+          {activeFiltersCount > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium border border-blue-200">
+              <span>{activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''} applied</span>
             </div>
-            <Button variant="ghost" size="sm" className="p-1">
-              <Filter className="h-5 w-5 text-gray-600" />
-            </Button>
-          </div>
+          )}
+          {/* Date Filter */}
+          <select
+            value={filters.dateFilter}
+            onChange={e => handleFilterChange('dateFilter', e.target.value)}
+            className="px-4 py-2 border border-input rounded-lg bg-background text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+          >
+            <option value="Date">Date</option>
+            <option value="Last 7 days">Last 7 days</option>
+            <option value="Last 30 days">Last 30 days</option>
+            <option value="Last 90 days">Last 90 days</option>
+          </select>
+          {/* Sort Order */}
+          <select
+            value={filters.sortOrder}
+            onChange={e => handleFilterChange('sortOrder', e.target.value as 'ascending' | 'descending')}
+            className="px-4 py-2 border border-input rounded-lg bg-background text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+          >
+            <option value="descending">Descending</option>
+            <option value="ascending">Ascending</option>
+          </select>
+
+          {/* Filter Button */}
+          <button className="flex items-center gap-2 px-4 py-2.5 border border-input rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-sm font-medium">
+            <Filter className="h-4 w-4" />
+            <span>Filters</span>
+          </button>
+          {/* Column settings Button */}
+          <button className="flex items-center gap-2 px-4 py-2.5 border border-input rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-sm font-medium">
+            <Settings className="h-4 w-4" />
+            <span>Columns</span>
+          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

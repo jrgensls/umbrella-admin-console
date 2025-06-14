@@ -1,12 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
 import { OrdersTable } from '@/components/OrdersTable';
-import { Button } from '@/components/ui/button';
-import { Plus, Download } from 'lucide-react';
+import { OrderFilterBar } from '@/components/OrderFilterBar';
+
+export interface OrderFilterState {
+  searchQuery: string;
+  dateFilter: string;
+  sortOrder: 'ascending' | 'descending';
+}
 
 const Orders = () => {
+  const [filters, setFilters] = useState<OrderFilterState>({
+    searchQuery: '',
+    dateFilter: 'Date',
+    sortOrder: 'descending',
+  });
+
+  const handleFilterChange = (newFilters: OrderFilterState) => {
+    setFilters(newFilters);
+  };
+
   return (
     <div className="min-h-screen bg-background flex w-full">
       <Sidebar />
@@ -17,17 +32,16 @@ const Orders = () => {
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-3xl font-bold text-foreground">Umbrella Orders</h1>
               <div className="flex items-center gap-3">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Download className="h-4 w-4" />
+                <button className="flex items-center gap-2 border px-4 py-2 rounded-md text-sm font-semibold border-[#214BCD] text-[#214BCD] hover:bg-blue-50 transition-colors">
                   Export to CSV
-                </Button>
-                <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
-                  <Plus className="h-4 w-4" />
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors">
                   Add Order
-                </Button>
+                </button>
               </div>
             </div>
-            <OrdersTable />
+            <OrderFilterBar filters={filters} onFilterChange={handleFilterChange} />
+            <OrdersTable filters={filters} />
           </div>
         </main>
       </div>
