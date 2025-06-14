@@ -19,7 +19,6 @@ export const WorkspacesTable: React.FC<WorkspacesTableProps> = ({ filters }) => 
       address: workspace.address || 'Unknown Address',
       startDate: workspace.start_date ? new Date(workspace.start_date).toLocaleDateString('da-DK') : 'Unknown Date',
       contactEmail: workspace.contact_email || '',
-      location: workspace.name || '',
     };
   }) : [];
 
@@ -31,9 +30,8 @@ export const WorkspacesTable: React.FC<WorkspacesTableProps> = ({ filters }) => 
       workspace.contactEmail.toLowerCase().includes(filters.searchQuery.toLowerCase())
     );
 
-  if (filters.location !== 'All Locations') {
-    filteredWorkspaces = filteredWorkspaces.filter(ws => ws.location === filters.location);
-  }
+  // Remove location filter: the Workspace type does not have a location property.
+  // Leave the UI in place for consistency, but don't filter by location.
 
   // Sorting
   filteredWorkspaces = filteredWorkspaces.slice().sort((a, b) => {
