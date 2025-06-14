@@ -1,4 +1,3 @@
-
 export interface Member {
   id: string;
   customerName: string;
@@ -61,4 +60,28 @@ export interface CompanyFilterState {
   multiLocationOnly: boolean;
   status: string;
   sortOrder: 'ascending' | 'descending';
+}
+
+export interface Order {
+  id: string;
+  order_number: string;
+  date: string;
+  company_name: string;
+  company_email: string;
+  company_phone: string | null;
+  company_vat_number: string | null;
+  company_address: string | null;
+  contact_person: string | null;
+  contact_title: string | null;
+  workspace_id: string;
+  workspace_name: string;
+  reference: string | null;
+  total_amount: number;
+  currency: string;
+  status: 'pending' | 'confirmed' | 'invoiced' | 'cancelled' | 'refunded';
+  created_at: string;
+  updated_at: string;
+  created_by_admin: string | null;
+  notes: string | null;
+  purchase_order_number: string | null;
 }

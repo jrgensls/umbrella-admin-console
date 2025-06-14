@@ -9,6 +9,124 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      order_status_audit: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          id: string
+          new_status: Database["public"]["Enums"]["order_status_enum"]
+          notes: string | null
+          old_status: Database["public"]["Enums"]["order_status_enum"] | null
+          order_id: string
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          new_status: Database["public"]["Enums"]["order_status_enum"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["order_status_enum"] | null
+          order_id: string
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          new_status?: Database["public"]["Enums"]["order_status_enum"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["order_status_enum"] | null
+          order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_audit_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          company_address: string | null
+          company_email: string
+          company_name: string
+          company_phone: string | null
+          company_vat_number: string | null
+          contact_person: string | null
+          contact_title: string | null
+          created_at: string
+          created_by_admin: string | null
+          currency: string | null
+          date: string
+          id: string
+          notes: string | null
+          order_number: string
+          purchase_order_number: string | null
+          reference: string | null
+          status: Database["public"]["Enums"]["order_status_enum"]
+          total_amount: number
+          updated_at: string
+          workspace_id: string
+          workspace_name: string
+        }
+        Insert: {
+          company_address?: string | null
+          company_email: string
+          company_name: string
+          company_phone?: string | null
+          company_vat_number?: string | null
+          contact_person?: string | null
+          contact_title?: string | null
+          created_at?: string
+          created_by_admin?: string | null
+          currency?: string | null
+          date: string
+          id?: string
+          notes?: string | null
+          order_number: string
+          purchase_order_number?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["order_status_enum"]
+          total_amount: number
+          updated_at?: string
+          workspace_id: string
+          workspace_name: string
+        }
+        Update: {
+          company_address?: string | null
+          company_email?: string
+          company_name?: string
+          company_phone?: string | null
+          company_vat_number?: string | null
+          contact_person?: string | null
+          contact_title?: string | null
+          created_at?: string
+          created_by_admin?: string | null
+          currency?: string | null
+          date?: string
+          id?: string
+          notes?: string | null
+          order_number?: string
+          purchase_order_number?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["order_status_enum"]
+          total_amount?: number
+          updated_at?: string
+          workspace_id?: string
+          workspace_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       registrations: {
         Row: {
           additional_contact_email: string | null
@@ -128,10 +246,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_order_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      order_status_enum:
+        | "pending"
+        | "confirmed"
+        | "invoiced"
+        | "cancelled"
+        | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -246,6 +372,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status_enum: [
+        "pending",
+        "confirmed",
+        "invoiced",
+        "cancelled",
+        "refunded",
+      ],
+    },
   },
 } as const

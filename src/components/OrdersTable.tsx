@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Table,
   TableBody,
@@ -10,99 +12,161 @@ import {
 } from '@/components/ui/table';
 import { type OrderFilterState } from '@/pages/Orders';
 
-// Mock data based on the screenshot
-const ordersData = [
-  {
-    id: '1',
-    name: 'Møllerup Gods',
-    vatNumber: 'DK12345678',
-    phone: '+1234567890',
-    email: 'info@moellerup.dk',
-    address: 'Møllerupvej 26',
-    city: '8410 Rønde, Denmark'
-  },
-  {
-    id: '2',
-    name: 'Kirstinelund',
-    vatNumber: '987654321',
-    phone: '+0987654321',
-    email: 'info@kirtinelund.dk',
-    address: 'Skæringvej 88',
-    city: '8520 Lystrup'
-  },
-  {
-    id: '3',
-    name: 'Workspace X',
-    vatNumber: '564738291',
-    phone: '+1122334455',
-    email: 'hello@workspacex.com',
-    address: '789 Creativity Ave',
-    city: 'Creative Town'
-  },
-  {
-    id: '4',
-    name: 'Bloxhub',
-    vatNumber: '564738291',
-    phone: '+1122334455',
-    email: 'info@bloxhub.dk',
-    address: '789 Creativity Ave',
-    city: 'Copenhagen'
-  }
-];
+interface Order {
+  id: string;
+  order_number: string;
+  date: string;
+  company_name: string;
+  company_email: string;
+  company_phone: string | null;
+  company_vat_number: string | null;
+  company_address: string | null;
+  contact_person: string | null;
+  workspace_name: string;
+  reference: string | null;
+  total_amount: number;
+  currency: string;
+  status: string;
+}
 
 interface OrdersTableProps {
   filters: OrderFilterState;
 }
 
 export const OrdersTable: React.FC<OrdersTableProps> = ({ filters }) => {
-  const { searchQuery, dateFilter, sortOrder } = filters;
+  const { data: orders = [], isLoading, error } = useQuery({
+    queryKey: ['orders', filters],
+    queryFn: async () => {
+      console.log('Fetching orders with filters:', filters);
+      
+      let query = supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: filters.sortOrder === 'ascending' });
 
-  let filteredOrders = ordersData.filter(order =>
-    order.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    order.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    order.city.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      // Apply search filter
+      if (filters.searchQuery.trim()) {
+        query = query.or(`company_name.ilike.%${filters.searchQuery}%,company_email.ilike.%${filters.searchQuery}%,workspace_name.ilike.%${filters.searchQuery}%`);
+      }
 
-  // Sorting
-  if (sortOrder === 'ascending') {
-    filteredOrders = filteredOrders.slice().sort((a, b) => a.name.localeCompare(b.name));
-  } else {
-    filteredOrders = filteredOrders.slice().sort((a, b) => b.name.localeCompare(a.name));
+      const { data, error } = await query;
+      
+      if (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+      }
+      
+      console.log('Fetched orders:', data);
+      return data as Order[];
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[490px] w-full mt-4 bg-white border rounded-lg shadow-sm flex items-center justify-center">
+        <div className="text-gray-500">Loading orders...</div>
+      </div>
+    );
   }
 
-  // For "dateFilter", in a real app, you'd filter dates, but here we just show the control.
+  if (error) {
+    return (
+      <div className="min-h-[490px] w-full mt-4 bg-white border rounded-lg shadow-sm flex items-center justify-center">
+        <div className="text-red-500">Error loading orders: {error.message}</div>
+      </div>
+    );
+  }
 
-  // Render table
+  const formatAmount = (amount: number, currency: string) => {
+    return new Intl.NumberFormat('da-DK', {
+      style: 'currency',
+      currency: currency || 'DKK',
+    }).format(amount / 100); // Convert from cents to actual amount
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('da-DK');
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-800' },
+      confirmed: { label: 'Confirmed', className: 'bg-green-100 text-green-800' },
+      invoiced: { label: 'Invoiced', className: 'bg-blue-100 text-blue-800' },
+      cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' },
+      refunded: { label: 'Refunded', className: 'bg-gray-100 text-gray-800' },
+    };
+
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    
+    return (
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.className}`}>
+        {config.label}
+      </span>
+    );
+  };
+
   return (
     <div className="min-h-[490px] w-full mt-4 bg-white border rounded-lg shadow-sm">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr>
-            <th className="px-6 py-4 text-left font-semibold text-gray-700">Name</th>
-            <th className="px-6 py-4 text-left font-semibold text-gray-700">VAT Number</th>
-            <th className="px-6 py-4 text-left font-semibold text-gray-700">Phone</th>
-            <th className="px-6 py-4 text-left font-semibold text-gray-700">Email</th>
-            <th className="px-6 py-4 text-left font-semibold text-gray-700">Address</th>
-            <th className="px-6 py-4 text-left font-semibold text-gray-700">City</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredOrders.map((order) => (
-            <tr key={order.id} className="hover:bg-gray-50">
-              <td className="px-6 py-3 font-medium">{order.name}</td>
-              <td className="px-6 py-3 text-gray-600">{order.vatNumber}</td>
-              <td className="px-6 py-3 text-gray-600">{order.phone}</td>
-              <td className="px-6 py-3">
-                <a href={`mailto:${order.email}`} className="text-blue-600 hover:underline">
-                  {order.email}
-                </a>
-              </td>
-              <td className="px-6 py-3 text-gray-600">{order.address}</td>
-              <td className="px-6 py-3 text-gray-600">{order.city}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="font-semibold text-gray-700">Order #</TableHead>
+            <TableHead className="font-semibold text-gray-700">Date</TableHead>
+            <TableHead className="font-semibold text-gray-700">Company</TableHead>
+            <TableHead className="font-semibold text-gray-700">Contact</TableHead>
+            <TableHead className="font-semibold text-gray-700">Workspace</TableHead>
+            <TableHead className="font-semibold text-gray-700">Amount</TableHead>
+            <TableHead className="font-semibold text-gray-700">Status</TableHead>
+            <TableHead className="font-semibold text-gray-700">Reference</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {orders.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                No orders found
+              </TableCell>
+            </TableRow>
+          ) : (
+            orders.map((order) => (
+              <TableRow key={order.id} className="hover:bg-gray-50">
+                <TableCell className="font-medium">{order.order_number}</TableCell>
+                <TableCell className="text-gray-600">{formatDate(order.date)}</TableCell>
+                <TableCell>
+                  <div>
+                    <div className="font-medium">{order.company_name}</div>
+                    <div className="text-sm text-gray-500">
+                      <a href={`mailto:${order.company_email}`} className="text-blue-600 hover:underline">
+                        {order.company_email}
+                      </a>
+                    </div>
+                    {order.company_vat_number && (
+                      <div className="text-xs text-gray-400">VAT: {order.company_vat_number}</div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="text-gray-600">
+                  {order.contact_person && (
+                    <div className="text-sm font-medium">{order.contact_person}</div>
+                  )}
+                  {order.company_phone && (
+                    <div className="text-xs text-gray-500">{order.company_phone}</div>
+                  )}
+                </TableCell>
+                <TableCell className="text-gray-600">{order.workspace_name}</TableCell>
+                <TableCell className="font-medium">
+                  {formatAmount(order.total_amount, order.currency)}
+                </TableCell>
+                <TableCell>{getStatusBadge(order.status)}</TableCell>
+                <TableCell className="text-gray-600 max-w-[200px] truncate">
+                  {order.reference || '-'}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 };
